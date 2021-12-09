@@ -23,9 +23,13 @@ def nouvel_incendie(capteur: Optional[str],intensite: Optional[str],latitude: Op
     """
 
     if capteur and intensite and latitude and longitude:
+        re.search("^\d$",capteur)
+        re.search("^[1-9][0-9]?$|^100$",intensite)
+        re.search("^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$",latitude)#match latitude
+        re.search("^[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$",longitude)#match latitude
+        sql = ""
+        # Database.insert(sql)
         return {"success","true"}
-    # with a match in case capteur =! souhaité.
-    # intensité != int.
-    sql = ""
-    #Database.insert(sql)
+
+
     return {"erreur":"a"}
