@@ -1,5 +1,10 @@
-#Projet Scientifique
-Trello : https://trello.com/c/H133Uak8  
+# API Simulation Projet Scientifique Transverse 🚒
+
+## Projet
+
+Github: <a href="https://github.com/ProjetScientifique">Github ⬜️</a>  
+Trello: <a href="https://trello.com/b/U4bDVtQ6/projet-transversal">Trello Projet 📈</a>
+
 
 ## Configuration :
 ```bash 
