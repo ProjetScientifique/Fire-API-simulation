@@ -15,7 +15,6 @@ Trello: <a href="https://trello.com/b/U4bDVtQ6/projet-transversal">Trello Projet
 
 Vous devez posseder le token de l'api  
 
-
 """
 
 app = FastAPI(
@@ -25,12 +24,33 @@ app = FastAPI(
 )
 
 
-@app.get("/")
+@app.get("/", tags=["DEBUG"])
 def interfaceAPI():
     return {"API Simulation": "Groupe 1"}
 
 
-@app.post("/new/incendie")
+"""GET  REQUESTS"""
+
+
+@app.get("/incendie/all", tags=["Incendie"])
+def get_Incendies():
+    """
+    Récupères tous les incendies dans une table.
+    :return:
+    """
+    pass
+
+@app.get("/incendie/current", tags=["Incendie"])
+def get_Current_Incendies():
+    """
+    Récupères les incendies
+    :return:
+    """
+    pass
+
+"""POST REQUESTS"""
+
+@app.post("/incendie/new", tags=["Incendie"])
 def nouvel_incendie(token_recu:str,capteur:str, intensite: str, latitude: str,
                     longitude: str):
     """
@@ -46,7 +66,7 @@ def nouvel_incendie(token_recu:str,capteur:str, intensite: str, latitude: str,
     <!--
     Python :
 
-    :param token: str
+    :param token_recu: str
     :param capteur: str
     :param intensite: str
     :param latitude: str
@@ -54,11 +74,11 @@ def nouvel_incendie(token_recu:str,capteur:str, intensite: str, latitude: str,
     :return: json response.
     -->
     """
-    if not token.token(token_recu):     raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    if not token.token(token_recu):raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
     if fonction.isCapteur(capteur) and fonction.isIntensite(intensite) and fonction.isLatitude(
             latitude) and fonction.isLongitude(longitude):
-        db = "incendie"
-        sql = f"INSERT INTO table (id_incendie, latitude, longtude, date_incendie, intensite_incendie) VALUES (NULL,'{latitude}', '{longitude}', NOW(), '{intensite}')"
+        db = "simulation"
+        sql = f"INSERT INTO `Incendie` (id_incendie, latitude, longtude, date_incendie, intensite_incendie) VALUES (NULL,'{latitude}', '{longitude}', NOW(), '{intensite}')"
         # Database(db).insert(sql)
         return {"success": {
             "type" : "insert",
@@ -70,6 +90,49 @@ def nouvel_incendie(token_recu:str,capteur:str, intensite: str, latitude: str,
                     "longitude":longitude,
                     "date_incendie":"now",
                     "intensite_incendie":intensite
+                }
+            }
+        }}
+
+    raise HTTPException(status_code=400, detail="Mauvais format de donnée envoyé, en cas de doute consulter la documentation https://localhost:8000/docs")
+
+
+
+@app.post("/capteur/new", tags=["Capteur"])
+def nouveau_Capteur(token_recu:str,latitude: str,longitude: str,nameCapteur:Optional[str]="NULL"):
+    """
+    Creer un nouveau capteur dans la base de donnée.</br>
+    Pour cerer un capteur :</br>
+        - NameCapteur Optionnel</br>
+        - latitude</br>
+        - longitude</br>
+
+    Exemple d'utilisation:
+    POST: localhost:8000/new/capteur?token="token",nameCapteur="CapteurIncroyable",latitude="45.76275055566161",longitude="4.844640087180309"
+    <!--
+    Python :
+
+    :param token_recu: str
+    :param nameCapteur: str
+    :param latitude: str
+    :param longitude: str
+    :return: json response.
+    -->
+    """
+    if not token.token(token_recu):raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    if fonction.isLatitude(latitude) and fonction.isLongitude(longitude):
+        db = "Simulation"
+        sql = f"INSERT INTO `Capteur` (nom_capteur, latitude, longtude) VALUES ('{nameCapteur}','{latitude}', '{longitude}')"
+        # Database(db).insert(sql)
+        return {"success": {
+            "type" : "insert",
+            "database" : db,
+            "requete" : sql,
+            "elements" : {
+                "value":{
+                    "nom_capteur":nameCapteur,
+                    "latitude":latitude,
+                    "longitude":longitude
                 }
             }
         }}
