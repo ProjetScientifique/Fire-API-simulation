@@ -1,4 +1,5 @@
 from utilities import fonction,token
+from utilities.database import Database
 
 from typing import Optional
 from fastapi import FastAPI,HTTPException
@@ -29,28 +30,26 @@ def interfaceAPI():
     return {"API Simulation": "Groupe 1"}
 
 
+"""
+.___                                .___.__        
+|   | ____   ____  ____   ____    __| _/|__| ____  
+|   |/    \_/ ___\/ __ \ /    \  / __ | |  |/ __ \ 
+|   |   |  \  \__\  ___/|   |  \/ /_/ | |  \  ___/ 
+|___|___|  /\___  >___  >___|  /\____ | |__|\___  >
+         \/     \/    \/     \/      \/         \/ 
+"""
+
 """GET  REQUESTS"""
-
-
-@app.get("/incendie/all", tags=["Incendie"])
-def get_Incendies():
+@app.get("/incendie", tags=["Incendie"])
+def get_Incendie(token_recu:str):
     """
     Récupères tous les incendies dans une table.
     :return:
     """
     pass
 
-@app.get("/incendie/current", tags=["Incendie"])
-def get_Current_Incendies():
-    """
-    Récupères les incendies
-    :return:
-    """
-    pass
-
 """POST REQUESTS"""
-
-@app.post("/incendie/new", tags=["Incendie"])
+@app.post("/incendie", tags=["Incendie"])
 def nouvel_incendie(token_recu:str,capteur:str, intensite: str, latitude: str,
                     longitude: str):
     """
@@ -97,8 +96,20 @@ def nouvel_incendie(token_recu:str,capteur:str, intensite: str, latitude: str,
     raise HTTPException(status_code=400, detail="Mauvais format de donnée envoyé, en cas de doute consulter la documentation https://localhost:8000/docs")
 
 
+"""
+_________                __                       
+\_   ___ \_____  _______/  |_  ____  __ _________ 
+/    \  \/\__  \ \____ \   __\/ __ \|  |  \_  __ \
+\     \____/ __ \|  |_> >  | \  ___/|  |  /|  | \/
+ \______  (____  /   __/|__|  \___  >____/ |__|   
+        \/     \/|__|             \/              
+"""
 
-@app.post("/capteur/new", tags=["Capteur"])
+"""
+POST Request
+    - Good à tester.
+"""
+@app.post("/capteur", tags=["Capteur"])
 def nouveau_Capteur(token_recu:str,latitude: str,longitude: str,nameCapteur:Optional[str]="NULL"):
     """
     Creer un nouveau capteur dans la base de donnée.</br>
@@ -122,7 +133,7 @@ def nouveau_Capteur(token_recu:str,latitude: str,longitude: str,nameCapteur:Opti
     if not token.token(token_recu):raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
     if fonction.isLatitude(latitude) and fonction.isLongitude(longitude):
         db = "Simulation"
-        sql = f"INSERT INTO `Capteur` (nom_capteur, latitude, longtude) VALUES ('{nameCapteur}','{latitude}', '{longitude}')"
+        sql = f"INSERT INTO `Capteur` (id_capteur, nom_capteur, latitude, longtude) VALUES ('{nameCapteur}','{latitude}', '{longitude}')"
         # Database(db).insert(sql)
         return {"success": {
             "type" : "insert",
@@ -138,3 +149,85 @@ def nouveau_Capteur(token_recu:str,latitude: str,longitude: str,nameCapteur:Opti
         }}
 
     raise HTTPException(status_code=400, detail="Mauvais format de donnée envoyé, en cas de doute consulter la documentation https://localhost:8000/docs")
+
+"""GET Capteur"""
+@app.get("/capteur", tags=["Capteur"])
+def recuperer_Capteur(token_recu:str,idCapteur: str):
+    """
+    Creer un nouveau capteur dans la base de donnée.</br>
+    Pour cerer un capteur :</br>
+        - NameCapteur Optionnel</br>
+        - latitude</br>
+        - longitude</br>
+
+    Exemple d'utilisation:
+    POST: localhost:8000/new/capteur?token="token",nameCapteur="CapteurIncroyable",latitude="45.76275055566161",longitude="4.844640087180309"
+    <!--
+    Python :
+
+    :param token_recu: str
+    :param nameCapteur: str
+    :param latitude: str
+    :param longitude: str
+    :return: json response.
+    -->
+    """
+    if not token.token(token_recu):raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    if fonction.isCapteur(idCapteur):
+        db = "Simulation"
+        sql = f"SELECT `nom_capteur`, `latitude`, `longtude` FROM `Capteur` WHERE `idCapteur` = '{idCapteur}';"
+        Database(db).select(sql)
+        return {"success": {
+            "type" : "select",
+            "database" : db,
+            "requete" : sql,
+            "elements" : {
+                "value":{
+                    "nom_capteur":nameCapteur,
+                    "latitude":latitude,
+                    "longitude":longitude
+                }
+            }
+        }}
+
+    raise HTTPException(status_code=400, detail="Mauvais format de donnée envoyé, en cas de doute consulter la documentation https://localhost:8000/docs")
+
+"""GET Capteur"""
+@app.get("/capteurs", tags=["Capteur"])
+def recuperer_les_Capteur(token_recu:str):
+    """
+    Creer un nouveau capteur dans la base de donnée.</br>
+    Pour cerer un capteur :</br>
+        - NameCapteur Optionnel</br>
+        - latitude</br>
+        - longitude</br>
+
+    Exemple d'utilisation:
+    POST: localhost:8000/new/capteur?token="token",nameCapteur="CapteurIncroyable",latitude="45.76275055566161",longitude="4.844640087180309"
+    <!--
+    Python :
+
+    :param token_recu: str
+    :param nameCapteur: str
+    :param latitude: str
+    :param longitude: str
+    :return: json response.
+    -->
+    """
+    if not token.token(token_recu):raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+
+    db = "Simulation"
+    sql = f"SELECT nom_capteur, latitude, longtude FROM `Capteur` (nom_capteur, latitude, longtude) VALUES ('{nameCapteur}','{latitude}', '{longitude}')"
+    # Database(db).insert(sql)
+    return {"success": {
+        "type" : "insert",
+        "database" : db,
+        "requete" : sql,
+        "elements" : {
+            "value":{
+                "nom_capteur":nameCapteur,
+                "latitude":latitude,
+                "longitude":longitude
+            }
+        }
+    }}

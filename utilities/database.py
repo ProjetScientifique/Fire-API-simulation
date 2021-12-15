@@ -29,5 +29,4 @@ class Database:
         db = self.connection()
         cursor = db.cursor()
         cursor.execute(sql)
-        db.commit()
-
+        return cursor.fetchall()
