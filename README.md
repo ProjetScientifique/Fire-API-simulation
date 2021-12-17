@@ -18,3 +18,8 @@ uvicorn main:app --reload
 ```
 Site généré : http://127.0.0.1:8000  
 Documentation :  http://127.0.0.1:8000/docs
+
+
+
+Doc :  
+https://fastapi.tiangolo.com/
