@@ -1,8 +1,11 @@
-from utilities import fonction,token
-from utilities.database import Database
+from utilities import fonction, token
+from typing import List
 
-from typing import Optional
-from fastapi import FastAPI,HTTPException
+from fastapi import Depends, FastAPI, HTTPException
+from sqlalchemy.orm import Session
+
+from sql_app import crud, models, schemas
+from sql_app.database import SessionLocal, engine
 
 description = """
 API Simulation Projet Scientifique Transverse 🚒
@@ -16,13 +19,28 @@ Trello: <a href="https://trello.com/b/U4bDVtQ6/projet-transversal">Trello Projet
 
 Vous devez posseder le token de l'api  
 
+
+
+# 449928d774153132c2c3509647e3d23f8e168fb50660fa27dd33c8342735b166
+
 """
+
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="API Simulation",
     description=description,
     version="0.0.1",
 )
+
+
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
 @app.get("/", tags=["DEBUG"])
@@ -40,60 +58,112 @@ def interfaceAPI():
 """
 
 """GET  REQUESTS"""
-@app.get("/incendie", tags=["Incendie"])
-def get_Incendie(token_recu:str):
+
+
+@app.get("/incendie/{incendie_id}", tags=["Incendie"], response_model=schemas.Incendie)
+def get_Incendie(token_recu: str, incendie_id: int, db: Session = Depends(get_db)):
     """
     Récupères tous les incendies dans une table.
     :return:
     """
-    pass
+    if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    db_incendie = crud.get_incendie(db, incendie_id=incendie_id)
+    if db_incendie is None:
+        raise HTTPException(status_code=404, detail="Incendie not found")
+    return db_incendie
+
+
+"""GET  REQUESTS"""
+
+
+@app.get("/incendies/", tags=["Incendie"], response_model=List[schemas.Incendie])
+def get_Incendies(token_recu: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """
+    Récupères tous les incendies dans une table.
+    :return:
+    """
+    if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    incendies = crud.get_incendies(db, skip=skip, limit=limit)
+    return incendies
+
 
 """POST REQUESTS"""
-@app.post("/incendie", tags=["Incendie"])
-def nouvel_incendie(token_recu:str,capteur:str, intensite: str, latitude: str,
-                    longitude: str):
+
+
+@app.post("/incendie/", tags=["Incendie"], response_model=schemas.Incendie)
+def nouvel_incendie(token_recu: str, incendie: schemas.IncendieCreate, db: Session = Depends(get_db)):
     """
-    Adding a new incendie dans la base de donnée.</br>
-    Les incendies on a besoin de:</br>
-        - capteur</br>
-        - intensite</br>
-        - latitude</br>
-        - longitude</br>
+        Adding a new incendie dans la base de donnée.</br>
+        Les incendies on a besoin de:</br>
+            - intensite</br>
+            - latitude</br>
+            - longitude</br>
 
-    Exemple d'utilisation:
-    POST: localhost:8000/new/incendie?token="token",capteur="1",intensite="10",latitude="45.76275055566161",longitude="4.844640087180309"
-    <!--
-    Python :
+        Exemple d'utilisation:
+        POST: localhost:8000/new/incendie?token="token",capteur="1",intensite="10",latitude="45.76275055566161",longitude="4.844640087180309"
+        <!--
+        Python :
 
-    :param token_recu: str
-    :param capteur: str
-    :param intensite: str
-    :param latitude: str
-    :param longitude: str
-    :return: json response.
-    -->
+        :param token_recu: str
+        :param capteur: str
+        :param intensite: str
+        :param latitude: str
+        :param longitude: str
+        :return: json response.
+        -->
+        """
+    if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    return crud.create_incendies(db, incendie=incendie)
+
+
+"""PATCH REQUESTS"""
+
+
+@app.patch("/incendie/{incendie_id}", tags=["Incendie"], response_model=schemas.Incendie)
+def edit_incendie(incendie_id: int, token_recu: str, incendie: schemas.IncendieCreate, db: Session = Depends(get_db)):
     """
-    if not token.token(token_recu):raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
-    if fonction.isCapteur(capteur) and fonction.isIntensite(intensite) and fonction.isLatitude(
-            latitude) and fonction.isLongitude(longitude):
-        db = "simulation"
-        sql = f"INSERT INTO `Incendie` (id_incendie, latitude, longtude, date_incendie, intensite_incendie) VALUES (NULL,'{latitude}', '{longitude}', NOW(), '{intensite}')"
-        # Database(db).insert(sql)
-        return {"success": {
-            "type" : "insert",
-            "database" : db,
-            "requete" : sql,
-            "elements" : {
-                "value":{
-                    "latitude":latitude,
-                    "longitude":longitude,
-                    "date_incendie":"now",
-                    "intensite_incendie":intensite
-                }
-            }
-        }}
+        PATCH = met a jour uniquement certaines données
 
-    raise HTTPException(status_code=400, detail="Mauvais format de donnée envoyé, en cas de doute consulter la documentation https://localhost:8000/docs")
+        Exemple d'utilisation:
+        POST: localhost:8000/new/incendie?token="token",capteur="1",intensite="10",latitude="45.76275055566161",longitude="4.844640087180309"
+        <!--
+        Python :
+
+        :param token_recu: str
+        :param capteur: str
+        :param intensite: str
+        :param latitude: str
+        :param longitude: str
+        :return: json response.
+        -->
+        """
+    if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    return crud.recreate_incendies(db, incendie=incendie)
+
+
+"""PUT REQUESTS"""
+
+
+@app.put("/incendie/{incendie_id}", tags=["Incendie"], response_model=schemas.Incendie)
+def change_incendie(incendie_id: int, token_recu: str, incendie: schemas.IncendieCreate, db: Session = Depends(get_db)):
+    """
+        PUT = réécrit
+
+        Exemple d'utilisation:
+        POST: localhost:8000/new/incendie?token="token",capteur="1",intensite="10",latitude="45.76275055566161",longitude="4.844640087180309"
+        <!--
+        Python :
+
+        :param token_recu: str
+        :param capteur: str
+        :param intensite: str
+        :param latitude: str
+        :param longitude: str
+        :return: json response.
+        -->
+        """
+    if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    return crud.create_incendies(db, incendie=incendie)
 
 
 """
@@ -109,8 +179,10 @@ _________                __
 POST Request
     - Good à tester.
 """
-@app.post("/capteur", tags=["Capteur"])
-def nouveau_Capteur(token_recu:str,latitude: str,longitude: str,nameCapteur:Optional[str]="NULL"):
+
+
+@app.post("/capteur/", tags=["Capteur"], response_model=schemas.Capteur)
+def nouveau_Capteur(token_recu: str, capteur: schemas.CapteurCreate, db: Session = Depends(get_db)):
     """
     Creer un nouveau capteur dans la base de donnée.</br>
     Pour cerer un capteur :</br>
@@ -130,29 +202,15 @@ def nouveau_Capteur(token_recu:str,latitude: str,longitude: str,nameCapteur:Opti
     :return: json response.
     -->
     """
-    if not token.token(token_recu):raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
-    if fonction.isLatitude(latitude) and fonction.isLongitude(longitude):
-        db = "Simulation"
-        sql = f"INSERT INTO `Capteur` (id_capteur, nom_capteur, latitude, longtude) VALUES ('{nameCapteur}','{latitude}', '{longitude}')"
-        # Database(db).insert(sql)
-        return {"success": {
-            "type" : "insert",
-            "database" : db,
-            "requete" : sql,
-            "elements" : {
-                "value":{
-                    "nom_capteur":nameCapteur,
-                    "latitude":latitude,
-                    "longitude":longitude
-                }
-            }
-        }}
+    if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    return crud.create_capteur(db, capteur=capteur)
 
-    raise HTTPException(status_code=400, detail="Mauvais format de donnée envoyé, en cas de doute consulter la documentation https://localhost:8000/docs")
 
 """GET Capteur"""
-@app.get("/capteur", tags=["Capteur"])
-def recuperer_Capteur(token_recu:str,idCapteur: str):
+
+
+@app.get("/capteur/{id_capteur}", tags=["Capteur"], response_model=schemas.Capteur)
+def recuperer_Capteur(token_recu: str, id_capteur: str, db: Session = Depends(get_db)):
     """
     Creer un nouveau capteur dans la base de donnée.</br>
     Pour cerer un capteur :</br>
@@ -172,29 +230,15 @@ def recuperer_Capteur(token_recu:str,idCapteur: str):
     :return: json response.
     -->
     """
-    if not token.token(token_recu):raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
-    if fonction.isCapteur(idCapteur):
-        db = "Simulation"
-        sql = f"SELECT `nom_capteur`, `latitude`, `longtude` FROM `Capteur` WHERE `idCapteur` = '{idCapteur}';"
-        Database(db).select(sql)
-        return {"success": {
-            "type" : "select",
-            "database" : db,
-            "requete" : sql,
-            "elements" : {
-                "value":{
-                    "nom_capteur":nameCapteur,
-                    "latitude":latitude,
-                    "longitude":longitude
-                }
-            }
-        }}
+    if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    db_capteur = crud.get_capteur(db, id_capteur=id_capteur)
+    if db_capteur is None:
+        raise HTTPException(status_code=404, detail="Capteur not found")
+    return db_capteur
 
-    raise HTTPException(status_code=400, detail="Mauvais format de donnée envoyé, en cas de doute consulter la documentation https://localhost:8000/docs")
 
-"""GET Capteur"""
-@app.get("/capteurs", tags=["Capteur"])
-def recuperer_les_Capteur(token_recu:str):
+@app.get("/capteurs/", tags=["Capteur"], response_model=List[schemas.Capteur])
+def recuperer_les_Capteurs(token_recu: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """
     Creer un nouveau capteur dans la base de donnée.</br>
     Pour cerer un capteur :</br>
@@ -214,20 +258,6 @@ def recuperer_les_Capteur(token_recu:str):
     :return: json response.
     -->
     """
-    if not token.token(token_recu):raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
-
-    db = "Simulation"
-    sql = f"SELECT nom_capteur, latitude, longtude FROM `Capteur` (nom_capteur, latitude, longtude) VALUES ('{nameCapteur}','{latitude}', '{longitude}')"
-    # Database(db).insert(sql)
-    return {"success": {
-        "type" : "insert",
-        "database" : db,
-        "requete" : sql,
-        "elements" : {
-            "value":{
-                "nom_capteur":nameCapteur,
-                "latitude":latitude,
-                "longitude":longitude
-            }
-        }
-    }}
+    if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    capteurs = crud.get_capteurs(db, skip=skip, limit=limit)
+    return capteurs
