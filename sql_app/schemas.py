@@ -32,6 +32,11 @@ class CapteurBase(BaseModel):
     longitude_capteur: float
     nom_capteur: str
 
+class CapteurUpdate(BaseModel):
+    latitude_capteur: Optional[float]
+    longitude_capteur: Optional[float]
+    nom_capteur: Optional[str]
+
 
 class CapteurCreate(CapteurBase):
     pass
