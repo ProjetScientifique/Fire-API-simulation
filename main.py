@@ -20,8 +20,8 @@ Trello: <a href="https://trello.com/b/U4bDVtQ6/projet-transversal">Trello Projet
 Vous devez posseder le token de l'api  
 
 
-
-# 449928d774153132c2c3509647e3d23f8e168fb50660fa27dd33c8342735b166
+## Token:
+### 449928d774153132c2c3509647e3d23f8e168fb50660fa27dd33c8342735b166
 
 """
 
@@ -120,50 +120,62 @@ def nouvel_incendie(token_recu: str, incendie: schemas.IncendieCreate, db: Sessi
 
 
 @app.patch("/incendie/{incendie_id}", tags=["Incendie"], response_model=schemas.Incendie)
-def edit_incendie(incendie_id: int, token_recu: str, incendie: schemas.IncendieCreate, db: Session = Depends(get_db)):
+def edit_incendie(incendie_id: int, token_recu: str, incendie: schemas.IncendieUpdate, db: Session = Depends(get_db)):
     """
         PATCH = met a jour uniquement certaines données
-
-        Exemple d'utilisation:
-        POST: localhost:8000/new/incendie?token="token",capteur="1",intensite="10",latitude="45.76275055566161",longitude="4.844640087180309"
-        <!--
-        Python :
-
-        :param token_recu: str
-        :param capteur: str
-        :param intensite: str
-        :param latitude: str
-        :param longitude: str
-        :return: json response.
-        -->
-        """
+    """
     if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
-    return crud.recreate_incendies(db, incendie=incendie)
+    incendie_to_edit = db.query(models.Incendie).filter(models.Incendie.id_incendie == incendie_id).first()
+    if incendie.latitude_incendie:
+        incendie_to_edit.latitude_incendie = incendie.latitude_incendie
+    if incendie.longitude_incendie:
+        incendie_to_edit.longitude_incendie = incendie.longitude_incendie
+    if incendie.intensite_incendie:
+        incendie_to_edit.intensite_incendie = incendie.intensite_incendie
+    if incendie.date_incendie:
+        incendie_to_edit.date_incendie = incendie.date_incendie
+
+    db.commit()
+    return incendie_to_edit
+
 
 
 """PUT REQUESTS"""
 
 
 @app.put("/incendie/{incendie_id}", tags=["Incendie"], response_model=schemas.Incendie)
-def change_incendie(incendie_id: int, token_recu: str, incendie: schemas.IncendieCreate, db: Session = Depends(get_db)):
+def change_incendie(incendie_id: int,incendie:schemas.IncendieCreate, token_recu: str, db: Session = Depends(get_db)):
+    """
+        PUT = réécrit
+    """
+    if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    incendie_to_edit = db.query(models.Incendie).filter(models.Incendie.id_incendie == incendie_id).first()
+    incendie_to_edit.latitude_incendie = incendie.latitude_incendie
+    incendie_to_edit.longitude_incendie = incendie.longitude_incendie
+    incendie_to_edit.intensite_incendie = incendie.intensite_incendie
+    incendie_to_edit.date_incendie = incendie.date_incendie
+
+    db.commit()
+
+    return incendie_to_edit
+
+
+@app.delete("/incendie/{incendie_id}", tags=["Incendie"], response_model=schemas.Incendie)
+def delete_incendie(incendie_id: int, token_recu: str, db: Session = Depends(get_db)):
     """
         PUT = réécrit
 
-        Exemple d'utilisation:
-        POST: localhost:8000/new/incendie?token="token",capteur="1",intensite="10",latitude="45.76275055566161",longitude="4.844640087180309"
-        <!--
-        Python :
-
-        :param token_recu: str
-        :param capteur: str
-        :param intensite: str
-        :param latitude: str
-        :param longitude: str
-        :return: json response.
-        -->
         """
     if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
-    return crud.create_incendies(db, incendie=incendie)
+    incendie_delete = db.query(models.Incendie).filter(models.Incendie.id_incendie == incendie_id).first()
+
+    if incendie_delete is None:
+        raise HTTPException(status_code=404, detail="Resource Not Found")
+
+    db.delete(incendie_delete)
+    db.commit()
+
+    return incendie_delete
 
 
 """
