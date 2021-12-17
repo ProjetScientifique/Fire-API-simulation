@@ -9,7 +9,7 @@ Trello: <a href="https://trello.com/b/U4bDVtQ6/projet-transversal">Trello Projet
 ## Configuration :
 ```bash 
 pip install uvicorn
-python3 -m pip install fastapi
+python3 -m pip install -r requirements.txt
 ```
 `git clone https://github.com/tellebma/Fire-API-simulation .`  
 ## Lancement du serveur :
