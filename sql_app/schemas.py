@@ -1,10 +1,12 @@
 from typing import List, Optional
 from pydantic import BaseModel
+import datetime
 
 class IncendieBase(BaseModel):
     latitude_incendie: float
     longitude_incendie: float
     intensite_incendie: float
+    date_incendie: datetime.datetime
 
 class IncendieCreate(IncendieBase):
     pass
