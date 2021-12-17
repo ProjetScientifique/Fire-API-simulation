@@ -2,37 +2,37 @@ from sqlalchemy.orm import Session
 from . import models, schemas
 
 
-def get_incendie(db: Session, incendie_id: int):
-    return db.query(models.Incendie).filter(models.Incendie.id_incendie == incendie_id).first()
+def get_incident(db: Session, incident_id: int):
+    return db.query(models.Incident).filter(models.Incident.id_incident == incident_id).first()
 
 
-def get_incendies(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Incendie).offset(skip).limit(limit).all()
+def get_incidents(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Incident).offset(skip).limit(limit).all()
 
 
-def create_incendies(db: Session, incendie: schemas.IncendieCreate):
-    db_incendie = models.Incendie(latitude_incendie=incendie.latitude_incendie,
-                                  longitude_incendie=incendie.longitude_incendie,
-                                  intensite_incendie=incendie.intensite_incendie, date_incendie=incendie.date_incendie)
-    db.add(db_incendie)
+def create_incidents(db: Session, incident: schemas.IncidentCreate):
+    db_incident = models.Incident(latitude_incident=incident.latitude_incident,
+                                  longitude_incident=incident.longitude_incident,
+                                  intensite_incident=incident.intensite_incident, date_incident=incident.date_incident)
+    db.add(db_incident)
     db.commit()
-    db.refresh(db_incendie)
-    return db_incendie
+    db.refresh(db_incident)
+    return db_incident
 
 
 
-def get_capteur(db: Session, id_capteur: int):
-    return db.query(models.Capteur).filter(models.Capteur.id_capteur == id_capteur).first()
+def get_detecteur(db: Session, id_detecteur: int):
+    return db.query(models.Detecteur).filter(models.Detecteur.id_detecteur == id_detecteur).first()
 
 
-def get_capteurs(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Capteur).offset(skip).limit(limit).all()
+def get_detecteurs(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Detecteur).offset(skip).limit(limit).all()
 
 
-def create_capteur(db: Session, capteur: schemas.CapteurCreate):
-    db_capteur = models.Capteur(latitude_capteur=capteur.latitude_capteur, longitude_capteur=capteur.longitude_capteur,
-                                nom_capteur=capteur.nom_capteur)
-    db.add(db_capteur)
+def create_detecteur(db: Session, detecteur: schemas.DetecteurCreate):
+    db_detecteur = models.Detecteur(latitude_detecteur=detecteur.latitude_detecteur, longitude_detecteur=detecteur.longitude_detecteur,
+                                nom_detecteur=detecteur.nom_detecteur)
+    db.add(db_detecteur)
     db.commit()
-    db.refresh(db_capteur)
-    return db_capteur
+    db.refresh(db_detecteur)
+    return db_detecteur

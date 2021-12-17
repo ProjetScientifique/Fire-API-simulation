@@ -54,5 +54,5 @@ ALTER TABLE detecteur
 ALTER TABLE incident
     ADD CONSTRAINT fk_incident_id_type_incident FOREIGN KEY (id_type_incident) REFERENCES type_incident(id_type_incident);
 
-INSERT INTO type_detecteur (nom_type_detecteur) VALUES ('Capteur');
-INSERT INTO type_incident (nom_type_incident) VALUES ('Incendie');
+INSERT INTO type_detecteur (nom_type_detecteur) VALUES ('Detecteur');
+INSERT INTO type_incident (nom_type_incident) VALUES ('Incident');

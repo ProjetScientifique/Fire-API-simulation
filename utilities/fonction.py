@@ -21,7 +21,7 @@ def isLongitude(element):
         return True
     return False
 
-def isCapteur(element):
+def isDetecteur(element):
     regex = "^\d$"
     if re.match(regex,element):
         return True

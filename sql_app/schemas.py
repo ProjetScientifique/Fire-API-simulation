@@ -2,48 +2,59 @@ from typing import List, Optional
 from pydantic import BaseModel
 import datetime
 
-class IncendieBase(BaseModel):
-    latitude_incendie: float
-    longitude_incendie: float
-    intensite_incendie: float
-    date_incendie: datetime.datetime
+class IncidentBase(BaseModel):
+    id_type_incident: int
+    latitude_incident: float
+    longitude_incident: float
+    intensite_incident: float
+    date_incident: datetime.datetime
 
 
-class IncendieUpdate(BaseModel):
-    latitude_incendie: Optional[float]
-    longitude_incendie: Optional[float]
-    intensite_incendie: Optional[float]
-    date_incendie: Optional[datetime.datetime]
+class IncidentUpdate(BaseModel):
+    id_type_incident: Optional[int]
+    latitude_incident: Optional[float]
+    longitude_incident: Optional[float]
+    intensite_incident: Optional[float]
+    date_incident: Optional[datetime.datetime]
 
 
-class IncendieCreate(IncendieBase):
+class IncidentCreate(IncidentBase):
     pass
 
 
-class Incendie(IncendieBase):
-    id_incendie: int
+class Incident(IncidentBase):
+    id_incident: int
 
     class Config:
         orm_mode = True
+        """schema_extra = {
+            'A_EDIT': {
+                "username": "johndoe",
+                "email": "johndoe@gmail.com",
+                "password": "password",
+                "is_staff": False,
+                "is_active": True
+            }
+        }"""
 
 
-class CapteurBase(BaseModel):
-    latitude_capteur: float
-    longitude_capteur: float
-    nom_capteur: str
+class DetecteurBase(BaseModel):
+    latitude_detecteur: float
+    longitude_detecteur: float
+    nom_detecteur: str
 
-class CapteurUpdate(BaseModel):
-    latitude_capteur: Optional[float]
-    longitude_capteur: Optional[float]
-    nom_capteur: Optional[str]
+class DetecteurUpdate(BaseModel):
+    latitude_detecteur: Optional[float]
+    longitude_detecteur: Optional[float]
+    nom_detecteur: Optional[str]
 
 
-class CapteurCreate(CapteurBase):
+class DetecteurCreate(DetecteurBase):
     pass
 
 
-class Capteur(CapteurBase):
-    id_capteur: int
+class Detecteur(DetecteurBase):
+    id_detecteur: int
 
     class Config:
         orm_mode = True
