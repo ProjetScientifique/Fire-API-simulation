@@ -22,10 +22,12 @@ class Incident(Base):
     type = relationship("Type_incident",back_populates="incident")
 
 
-class type_detecteur(Base):
+class Type_detecteur(Base):
     __tablename__ = "type_detecteur"
     id_type_detecteur = Column(Integer, primary_key=True)
     nom_type_detecteur = Column(String)
+    detecteur = relationship("Detecteur",back_populates="type")
+
 
 class Detecteur(Base):
     __tablename__ = "detecteur"
@@ -34,3 +36,5 @@ class Detecteur(Base):
     nom_detecteur = Column(String)
     latitude_detecteur = Column(Numeric(precision=9, scale=7))
     longitude_detecteur = Column(Numeric(precision=10, scale=7))
+
+    type = relationship("Type_detecteur",back_populates="detecteur")

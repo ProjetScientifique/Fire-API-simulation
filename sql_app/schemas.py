@@ -39,11 +39,13 @@ class Incident(IncidentBase):
 
 
 class DetecteurBase(BaseModel):
+    id_type_detecteur: int
     latitude_detecteur: float
     longitude_detecteur: float
     nom_detecteur: str
 
 class DetecteurUpdate(BaseModel):
+    id_type_detecteur: Optional[int]
     latitude_detecteur: Optional[float]
     longitude_detecteur: Optional[float]
     nom_detecteur: Optional[str]

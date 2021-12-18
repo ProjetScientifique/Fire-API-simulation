@@ -11,14 +11,14 @@ def get_incidents(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_incidents(db: Session, incident: schemas.IncidentCreate):
-    db_incident = models.Incident(latitude_incident=incident.latitude_incident,
+    db_incident = models.Incident(id_type_incident=incident.id_type_incident,
+                                  latitude_incident=incident.latitude_incident,
                                   longitude_incident=incident.longitude_incident,
                                   intensite_incident=incident.intensite_incident, date_incident=incident.date_incident)
     db.add(db_incident)
     db.commit()
     db.refresh(db_incident)
     return db_incident
-
 
 
 def get_detecteur(db: Session, id_detecteur: int):
@@ -30,8 +30,10 @@ def get_detecteurs(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_detecteur(db: Session, detecteur: schemas.DetecteurCreate):
-    db_detecteur = models.Detecteur(latitude_detecteur=detecteur.latitude_detecteur, longitude_detecteur=detecteur.longitude_detecteur,
-                                nom_detecteur=detecteur.nom_detecteur)
+    db_detecteur = models.Detecteur(id_type_detecteur=detecteur.id_type_detecteur,
+                                    latitude_detecteur=detecteur.latitude_detecteur,
+                                    longitude_detecteur=detecteur.longitude_detecteur,
+                                    nom_detecteur=detecteur.nom_detecteur)
     db.add(db_detecteur)
     db.commit()
     db.refresh(db_detecteur)

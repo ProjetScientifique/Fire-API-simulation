@@ -124,6 +124,7 @@ def edit_incident(incident_id: int, token_recu: str, incident: schemas.IncidentU
     """
     if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
     incident_to_edit = db.query(models.Incident).filter(models.Incident.id_incident == incident_id).first()
+    if incident.id_type_incident: incident_to_edit.id_type_incident = incident.id_type_incident
     if incident.latitude_incident: incident_to_edit.latitude_incident = incident.latitude_incident
     if incident.longitude_incident: incident_to_edit.longitude_incident = incident.longitude_incident
     if incident.intensite_incident: incident_to_edit.intensite_incident = incident.intensite_incident
@@ -284,6 +285,7 @@ def edit_detecteur(detecteur_id: int, token_recu: str, detecteur: schemas.Detect
     """
     if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
     detecteur_to_edit = db.query(models.Detecteur).filter(models.Detecteur.id_detecteur == detecteur_id).first()
+    if detecteur.id_type_detecteur: detecteur_to_edit.id_type_detecteur = detecteur.id_type_detecteur
     if detecteur.latitude_detecteur: detecteur_to_edit.latitude_detecteur = detecteur.latitude_detecteur
     if detecteur.longitude_detecteur: detecteur_to_edit.longitude_detecteur = detecteur.longitude_detecteur
     if detecteur.nom_detecteur: detecteur_to_edit.nom_detecteur = detecteur.nom_detecteur
@@ -311,6 +313,7 @@ def change_detecteur(detecteur_id: int,detecteur:schemas.DetecteurCreate, token_
 
     if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
     detecteur_to_edit = db.query(models.Detecteur).filter(models.Detecteur.id_detecteur == detecteur_id).first()
+    detecteur_to_edit.id_type_detecteur = detecteur.id_type_detecteur
     detecteur_to_edit.latitude_detecteur = detecteur.latitude_detecteur
     detecteur_to_edit.longitude_detecteur = detecteur.longitude_detecteur
     detecteur_to_edit.nom_detecteur = detecteur.nom_detecteur
