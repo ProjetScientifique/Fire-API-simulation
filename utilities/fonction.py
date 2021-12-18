@@ -1,7 +1,10 @@
 import re
 
 """
-Regexs verification des données
+Regexs verification des données.
+
+-- NOT USED BUT CAN BE. -- 
+
 """
 def isIntensite(element):
     regex = "^[1-9][0-9]?$|^100$"
