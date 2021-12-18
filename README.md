@@ -22,9 +22,9 @@ Documentation :  http://127.0.0.1:8000/docs
 
 ## Doc Python :
 Doc Python Fast API :  
-https://fastapi.tiangolo.com/
+https://fastapi.tiangolo.com/  
 Doc sqlalchemy :  
-https://www.sqlalchemy.org/
+https://www.sqlalchemy.org/  
 
 
 ## Utilisation de l'api : 
