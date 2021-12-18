@@ -62,7 +62,7 @@ def interfaceAPI():
 
 
 @app.post("/incident/", tags=["Incident"], response_model=schemas.Incident)
-def nouvel_incident(token_recu: str, incident: schemas.IncidentCreate, db: Session = Depends(get_db)):
+def nouvel_incident(token_api: str, incident: schemas.IncidentCreate, db: Session = Depends(get_db)):
     """
         Adding a new incident dans la base de donnée.</br>
         Les incidents on a besoin de:</br>
@@ -75,7 +75,7 @@ def nouvel_incident(token_recu: str, incident: schemas.IncidentCreate, db: Sessi
         <!--
         Python :
 
-        :param token_recu: str
+        :param token_api: str
         :param detecteur: str
         :param intensite: str
         :param latitude: str
@@ -83,7 +83,7 @@ def nouvel_incident(token_recu: str, incident: schemas.IncidentCreate, db: Sessi
         :return: json response.
         -->
         """
-    if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
     return crud.create_incidents(db, incident=incident)
 
 
@@ -91,24 +91,24 @@ def nouvel_incident(token_recu: str, incident: schemas.IncidentCreate, db: Sessi
 
 
 @app.get("/incident/{incident_id}", tags=["Incident"], response_model=schemas.Incident)
-def get_Incident(token_recu: str, incident_id: int, db: Session = Depends(get_db)):
+def get_Incident(token_api: str, incident_id: int, db: Session = Depends(get_db)):
     """
     Récupères tous les incidents dans une table.
     :return:
     """
-    if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
     db_incident = crud.get_incident(db, incident_id=incident_id)
     if db_incident is None:
         raise HTTPException(status_code=404, detail="Incident not found")
     return db_incident
 
 @app.get("/incidents/", tags=["Incident"], response_model=List[schemas.Incident])
-def get_Incidents(token_recu: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def get_Incidents(token_api: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """
     Récupères tous les incidents dans une table.
     :return:
     """
-    if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
     incidents = crud.get_incidents(db, skip=skip, limit=limit)
     return incidents
 
@@ -118,11 +118,11 @@ def get_Incidents(token_recu: str, skip: int = 0, limit: int = 100, db: Session 
 
 
 @app.patch("/incident/{incident_id}", tags=["Incident"], response_model=schemas.Incident)
-def edit_incident(incident_id: int, token_recu: str, incident: schemas.IncidentUpdate, db: Session = Depends(get_db)):
+def edit_incident(incident_id: int, token_api: str, incident: schemas.IncidentUpdate, db: Session = Depends(get_db)):
     """
         PATCH = met a jour uniquement certaines données
     """
-    if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
     incident_to_edit = db.query(models.Incident).filter(models.Incident.id_incident == incident_id).first()
     if incident.id_type_incident: incident_to_edit.id_type_incident = incident.id_type_incident
     if incident.latitude_incident: incident_to_edit.latitude_incident = incident.latitude_incident
@@ -139,11 +139,11 @@ def edit_incident(incident_id: int, token_recu: str, incident: schemas.IncidentU
 
 
 @app.put("/incident/{incident_id}", tags=["Incident"], response_model=schemas.Incident)
-def change_incident(incident_id: int,incident:schemas.IncidentCreate, token_recu: str, db: Session = Depends(get_db)):
+def change_incident(incident_id: int,incident:schemas.IncidentCreate, token_api: str, db: Session = Depends(get_db)):
     """
         PUT = réécrit
     """
-    if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
     incident_to_edit = db.query(models.Incident).filter(models.Incident.id_incident == incident_id).first()
     incident_to_edit.latitude_incident = incident.latitude_incident
     incident_to_edit.longitude_incident = incident.longitude_incident
@@ -156,12 +156,12 @@ def change_incident(incident_id: int,incident:schemas.IncidentCreate, token_recu
 
 """DELETE REQUESTS"""
 @app.delete("/incident/{incident_id}", tags=["Incident"], response_model=schemas.Incident)
-def delete_incident(incident_id: int, token_recu: str, db: Session = Depends(get_db)):
+def delete_incident(incident_id: int, token_api: str, db: Session = Depends(get_db)):
     """
         PUT = réécrit
 
         """
-    if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
     incident_delete = db.query(models.Incident).filter(models.Incident.id_incident == incident_id).first()
 
     if incident_delete is None:
@@ -189,7 +189,7 @@ POST Request
 
 
 @app.post("/detecteur/", tags=["Detecteur"], response_model=schemas.Detecteur)
-def nouveau_Detecteur(detecteur: schemas.DetecteurCreate,token_recu: str, db: Session = Depends(get_db)):
+def nouveau_Detecteur(detecteur: schemas.DetecteurCreate,token_api: str, db: Session = Depends(get_db)):
     """
     Creer un nouveau detecteur dans la base de donnée.</br>
     Pour cerer un detecteur :</br>
@@ -203,11 +203,11 @@ def nouveau_Detecteur(detecteur: schemas.DetecteurCreate,token_recu: str, db: Se
     Python :
 
     :param detecteur: Json du detecteur à creer
-    :param token_recu: Token pour acceder à l'API
+    :param token_api: Token pour acceder à l'API
     :return: json du detecteur créé
     -->
     """
-    if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
     return crud.create_detecteur(db, detecteur=detecteur)
 
 
@@ -215,7 +215,7 @@ def nouveau_Detecteur(detecteur: schemas.DetecteurCreate,token_recu: str, db: Se
 
 
 @app.get("/detecteur/{id_detecteur}", tags=["Detecteur"], response_model=schemas.Detecteur)
-def recuperer_Detecteur(id_detecteur: str, token_recu: str, db: Session = Depends(get_db)):
+def recuperer_Detecteur(id_detecteur: str, token_api: str, db: Session = Depends(get_db)):
     """
     Creer un nouveau detecteur dans la base de donnée.</br>
     Pour cerer un detecteur :</br>
@@ -228,14 +228,14 @@ def recuperer_Detecteur(id_detecteur: str, token_recu: str, db: Session = Depend
     <!--
     Python :
 
-    :param token_recu: str
+    :param token_api: str
     :param nameDetecteur: str
     :param latitude: str
     :param longitude: str
     :return: json response.
     -->
     """
-    if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
     db_detecteur = crud.get_detecteur(db, id_detecteur=id_detecteur)
     if db_detecteur is None:
         raise HTTPException(status_code=404, detail="Detecteur not found")
@@ -243,7 +243,7 @@ def recuperer_Detecteur(id_detecteur: str, token_recu: str, db: Session = Depend
 
 
 @app.get("/detecteurs/", tags=["Detecteur"], response_model=List[schemas.Detecteur])
-def recuperer_les_Detecteurs(token_recu: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def recuperer_les_Detecteurs(token_api: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """
     Creer un nouveau detecteur dans la base de donnée.</br>
     Pour cerer un detecteur :</br>
@@ -256,14 +256,14 @@ def recuperer_les_Detecteurs(token_recu: str, skip: int = 0, limit: int = 100, d
     <!--
     Python :
 
-    :param token_recu: str
+    :param token_api: str
     :param nameDetecteur: str
     :param latitude: str
     :param longitude: str
     :return: json response.
     -->
     """
-    if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
     detecteurs = crud.get_detecteurs(db, skip=skip, limit=limit)
     return detecteurs
 
@@ -273,17 +273,17 @@ def recuperer_les_Detecteurs(token_recu: str, skip: int = 0, limit: int = 100, d
 
 
 @app.patch("/detecteur/{detecteurs_id}", tags=["Detecteur"], response_model=schemas.Detecteur)
-def edit_detecteur(detecteur_id: int, token_recu: str, detecteur: schemas.DetecteurUpdate, db: Session = Depends(get_db)):
+def edit_detecteur(detecteur_id: int, token_api: str, detecteur: schemas.DetecteurUpdate, db: Session = Depends(get_db)):
     """
     PATCH = met a jour uniquement certaines données
 
 
     :param detecteur_id: id du detecteur a modifié
-    :param token_recu: Token pour acceder à l'API
+    :param token_api: Token pour acceder à l'API
     :param detecteur: JSON des éléments a modifier
     :return: Json du Detecteur modifié
     """
-    if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
     detecteur_to_edit = db.query(models.Detecteur).filter(models.Detecteur.id_detecteur == detecteur_id).first()
     if detecteur.id_type_detecteur: detecteur_to_edit.id_type_detecteur = detecteur.id_type_detecteur
     if detecteur.latitude_detecteur: detecteur_to_edit.latitude_detecteur = detecteur.latitude_detecteur
@@ -298,7 +298,7 @@ def edit_detecteur(detecteur_id: int, token_recu: str, detecteur: schemas.Detect
 
 
 @app.put("/detecteur/{detecteurs_id}", tags=["Detecteur"], response_model=schemas.Detecteur)
-def change_detecteur(detecteur_id: int,detecteur:schemas.DetecteurCreate, token_recu: str, db: Session = Depends(get_db)):
+def change_detecteur(detecteur_id: int,detecteur:schemas.DetecteurCreate, token_api: str, db: Session = Depends(get_db)):
     """
     PUT = réécrit
     Réécrir la totalité du detecteur possédant l'id.
@@ -306,12 +306,12 @@ def change_detecteur(detecteur_id: int,detecteur:schemas.DetecteurCreate, token_
     <!--
     :param detecteur_id: id du detecteur (bdd)
     :param detecteur: json du detecteur modifié
-    :param token_recu: Token pour acceder à l'api
+    :param token_api: Token pour acceder à l'api
     :return: json du detecteur modifié
     -->
     """
 
-    if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
     detecteur_to_edit = db.query(models.Detecteur).filter(models.Detecteur.id_detecteur == detecteur_id).first()
     detecteur_to_edit.id_type_detecteur = detecteur.id_type_detecteur
     detecteur_to_edit.latitude_detecteur = detecteur.latitude_detecteur
@@ -325,16 +325,16 @@ def change_detecteur(detecteur_id: int,detecteur:schemas.DetecteurCreate, token_
 
 
 @app.delete("/detecteur/{detecteurs_id}", tags=["Detecteur"], response_model=schemas.Detecteur)
-def delete_detecteur(detecteur_id: int, token_recu: str, db: Session = Depends(get_db)):
+def delete_detecteur(detecteur_id: int, token_api: str, db: Session = Depends(get_db)):
     """
     DELETE Detecteur by id.
 
     :param detecteur_id:
-    :param token_recu:
+    :param token_api:
     :param db:
     :return:
     """
-    if not token.token(token_recu): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
     detecteur_delete = db.query(models.Detecteur).filter(models.Detecteur.id_detecteur == detecteur_id).first()
 
     if detecteur_delete is None:
