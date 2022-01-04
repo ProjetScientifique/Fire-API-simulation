@@ -9,7 +9,7 @@ class Type_incident(Base):
     id_type_incident = Column(Integer, primary_key=True)
     nom_type_incident = Column(String)
 
-    incident = relationship("Incident", back_populates="type")
+    incidents = relationship("Incident", back_populates="type_incident")
 
 
 class Incident(Base):
@@ -21,8 +21,7 @@ class Incident(Base):
     longitude_incident = Column(Numeric(precision=10, scale=7))
     intensite_incident = Column(Numeric(precision=4, scale=2))
 
-    type = relationship("Type_incident", back_populates="incident")
-
+    type_incident = relationship("Type_incident", back_populates="incidents")
 
 class Type_detecteur(Base):
     __tablename__ = "type_detecteur"

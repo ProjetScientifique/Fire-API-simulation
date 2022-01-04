@@ -90,7 +90,7 @@ def nouvel_incident(token_api: str, incident: schemas.IncidentCreate, db: Sessio
 """GET  REQUESTS"""
 
 
-@app.get("/incident/{incident_id}", tags=["Incident"])# ,response_model=schemas.Incident
+@app.get("/incident/{incident_id}", tags=["Incident"], response_model=schemas.Incident)
 def get_Incident(token_api: str, incident_id: int, db: Session = Depends(get_db)):
     """
     Récupères tous les incidents dans une table.

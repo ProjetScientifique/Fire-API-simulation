@@ -10,6 +10,18 @@ import datetime
 |___|___|  /\___  >__\____ |\___  >___|  /__|  
          \/     \/        \/    \/     \/      
 """
+"""NON UTILISÉ"""
+
+
+class Type_incident(BaseModel):
+    id_type_incident: int
+    nom_type_incident: str
+
+    class Config:
+        orm_mode = True
+
+
+"""NON UTILISÉ"""
 
 class IncidentBase(BaseModel):
     id_type_incident: int
@@ -33,6 +45,7 @@ class IncidentCreate(IncidentBase):
 
 class Incident(IncidentBase):
     id_incident: int
+    type_incident: Type_incident
 
     class Config:
         orm_mode = True
@@ -82,18 +95,7 @@ class Detecteur(DetecteurBase):
         orm_mode = True
 
 
-"""NON UTILISÉ"""
 
-
-class Type_incident(BaseModel):
-    id_type_incident: int
-    nom_type_incident: str
-
-    class Config:
-        orm_mode = True
-
-
-"""NON UTILISÉ"""
 
 
 class Type_detecteur(BaseModel):
