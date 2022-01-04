@@ -76,3 +76,13 @@ def create_detecte_event(db: Session, detecte: schemas.Detecte):
     db.commit()
     db.refresh(db_detect)
     return db_detect
+
+
+def get_detecte_event(id_incident:int , id_detecteur:int ,db: Session):
+    return db.query(models.Detecte).\
+        filter(models.Detecte.id_detecteur == id_detecteur).\
+        filter(models.Detecte.id_incident == id_incident).\
+        first()
+
+def get_detectes_events(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Detecte).offset(skip).limit(limit).all()
