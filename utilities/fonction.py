@@ -1,7 +1,10 @@
 import re
 
 """
-Regexs verification des données
+Regexs verification des données.
+
+-- NOT USED BUT CAN BE. -- 
+
 """
 def isIntensite(element):
     regex = "^[1-9][0-9]?$|^100$"
@@ -21,7 +24,7 @@ def isLongitude(element):
         return True
     return False
 
-def isCapteur(element):
+def isDetecteur(element):
     regex = "^\d$"
     if re.match(regex,element):
         return True
