@@ -11,6 +11,14 @@ import datetime
          \/     \/        \/    \/     \/      
 """
 
+
+class Type_incident(BaseModel):
+    id_type_incident: int
+    nom_type_incident: str
+
+    class Config:
+        orm_mode = True
+
 class IncidentBase(BaseModel):
     id_type_incident: int
     latitude_incident: float
@@ -26,25 +34,16 @@ class IncidentUpdate(BaseModel):
     intensite_incident: Optional[float]
     date_incident: Optional[datetime.datetime]
 
-
 class IncidentCreate(IncidentBase):
     pass
 
-
 class Incident(IncidentBase):
     id_incident: int
-
+    type_incident : Type_incident
     class Config:
         orm_mode = True
-        """schema_extra = {
-            'A_EDIT': {
-                "username": "johndoe",
-                "email": "johndoe@gmail.com",
-                "password": "password",
-                "is_staff": False,
-                "is_active": True
-            }
-        }"""
+
+
 
 
 """
@@ -82,23 +81,24 @@ class Detecteur(DetecteurBase):
         orm_mode = True
 
 
-"""NON UTILISÉ"""
-
-
-class Type_incident(BaseModel):
-    id_type_incident: int
-    nom_type_incident: str
+class Type_detecteur(BaseModel):
+    id_type_detecteur: int
+    nom_type_detecteur: str
 
     class Config:
         orm_mode = True
 
 
-"""NON UTILISÉ"""
 
 
-class Type_detecteur(BaseModel):
-    id_type_detecteur: int
-    nom_type_detecteur: str
+"""
+Detecte.
+"""
 
+class Detecte(BaseModel):
+    id_incident: int
+    id_detecteur: int
+    date_detecte: datetime.datetime
+    intensite_detecte: float
     class Config:
         orm_mode = True

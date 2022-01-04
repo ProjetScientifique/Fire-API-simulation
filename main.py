@@ -57,7 +57,6 @@ def interfaceAPI():
          \/     \/    \/     \/      \/         \/ 
 """
 
-
 """POST REQUESTS"""
 
 
@@ -90,7 +89,7 @@ def nouvel_incident(token_api: str, incident: schemas.IncidentCreate, db: Sessio
 """GET  REQUESTS"""
 
 
-@app.get("/incident/{incident_id}", tags=["Incident"])# ,response_model=schemas.Incident
+@app.get("/incident/{incident_id}", tags=["Incident"], response_model=schemas.Incident)
 def get_Incident(token_api: str, incident_id: int, db: Session = Depends(get_db)):
     """
     Récupères tous les incidents dans une table.
@@ -102,6 +101,7 @@ def get_Incident(token_api: str, incident_id: int, db: Session = Depends(get_db)
         raise HTTPException(status_code=404, detail="Incident not found")
     return db_incident
 
+
 @app.get("/incidents/", tags=["Incident"], response_model=List[schemas.Incident])
 def get_Incidents(token_api: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """
@@ -111,7 +111,6 @@ def get_Incidents(token_api: str, skip: int = 0, limit: int = 100, db: Session =
     if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
     incidents = crud.get_incidents(db, skip=skip, limit=limit)
     return incidents
-
 
 
 """PATCH REQUESTS"""
@@ -134,12 +133,11 @@ def edit_incident(incident_id: int, token_api: str, incident: schemas.IncidentUp
     return incident_to_edit
 
 
-
 """PUT REQUESTS"""
 
 
 @app.put("/incident/{incident_id}", tags=["Incident"], response_model=schemas.Incident)
-def change_incident(incident_id: int,incident:schemas.IncidentCreate, token_api: str, db: Session = Depends(get_db)):
+def change_incident(incident_id: int, incident: schemas.IncidentCreate, token_api: str, db: Session = Depends(get_db)):
     """
         PUT = réécrit
     """
@@ -154,7 +152,10 @@ def change_incident(incident_id: int,incident:schemas.IncidentCreate, token_api:
 
     return incident_to_edit
 
+
 """DELETE REQUESTS"""
+
+
 @app.delete("/incident/{incident_id}", tags=["Incident"], response_model=schemas.Incident)
 def delete_incident(incident_id: int, token_api: str, db: Session = Depends(get_db)):
     """
@@ -189,7 +190,7 @@ POST Request
 
 
 @app.post("/detecteur/", tags=["Detecteur"], response_model=schemas.Detecteur)
-def nouveau_Detecteur(detecteur: schemas.DetecteurCreate,token_api: str, db: Session = Depends(get_db)):
+def nouveau_Detecteur(detecteur: schemas.DetecteurCreate, token_api: str, db: Session = Depends(get_db)):
     """
     Creer un nouveau detecteur dans la base de donnée.</br>
     Pour cerer un detecteur :</br>
@@ -268,12 +269,12 @@ def recuperer_les_Detecteurs(token_api: str, skip: int = 0, limit: int = 100, db
     return detecteurs
 
 
-
 """PATCH REQUESTS"""
 
 
 @app.patch("/detecteur/{detecteurs_id}", tags=["Detecteur"], response_model=schemas.Detecteur)
-def edit_detecteur(detecteur_id: int, token_api: str, detecteur: schemas.DetecteurUpdate, db: Session = Depends(get_db)):
+def edit_detecteur(detecteur_id: int, token_api: str, detecteur: schemas.DetecteurUpdate,
+                   db: Session = Depends(get_db)):
     """
     PATCH = met a jour uniquement certaines données
 
@@ -293,12 +294,12 @@ def edit_detecteur(detecteur_id: int, token_api: str, detecteur: schemas.Detecte
     return detecteur_to_edit
 
 
-
 """PUT REQUESTS"""
 
 
 @app.put("/detecteur/{detecteurs_id}", tags=["Detecteur"], response_model=schemas.Detecteur)
-def change_detecteur(detecteur_id: int,detecteur:schemas.DetecteurCreate, token_api: str, db: Session = Depends(get_db)):
+def change_detecteur(detecteur_id: int, detecteur: schemas.DetecteurCreate, token_api: str,
+                     db: Session = Depends(get_db)):
     """
     PUT = réécrit
     Réécrir la totalité du detecteur possédant l'id.
@@ -320,6 +321,7 @@ def change_detecteur(detecteur_id: int,detecteur:schemas.DetecteurCreate, token_
     db.commit()
 
     return detecteur_to_edit
+
 
 """DELETE REQUESTS"""
 
@@ -346,8 +348,7 @@ def delete_detecteur(detecteur_id: int, token_api: str, db: Session = Depends(ge
     return detecteur_delete
 
 
-
-@app.get("/incidents/type/", tags=["type","Incident"], response_model=List[schemas.Type_incident])
+@app.get("/incidents/type/", tags=["type", "Incident"], response_model=List[schemas.Type_incident])
 def recuperer_les_type_incidents(token_api: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """
     Ne devrait normalement pas servir 
@@ -356,8 +357,9 @@ def recuperer_les_type_incidents(token_api: str, skip: int = 0, limit: int = 100
     type_incidents = crud.get_types_incidents(db, skip=skip, limit=limit)
     return type_incidents
 
-@app.get("/incident/type/name/", tags=["type","Incident"], response_model=schemas.Type_incident)
-def recuperer_incident_by_name(token_api: str, name_incident:str, db: Session = Depends(get_db)):
+
+@app.get("/incident/type/name/", tags=["type", "Incident"], response_model=schemas.Type_incident)
+def recuperer_incident_by_name(token_api: str, name_incident: str, db: Session = Depends(get_db)):
     """
     Ne devrait normalement pas servir 
     """
@@ -365,8 +367,9 @@ def recuperer_incident_by_name(token_api: str, name_incident:str, db: Session = 
     type_incidents = crud.get_type_incident_by_nom(db, nom_type_incident=name_incident)
     return type_incidents
 
-@app.get("/incident/type/", tags=["type","Incident"], response_model=schemas.Type_incident)
-def recuperer_incident_by_id(token_api: str, id_incident:int, db: Session = Depends(get_db)):
+
+@app.get("/incident/type/", tags=["type", "Incident"], response_model=schemas.Type_incident)
+def recuperer_incident_by_id(token_api: str, id_incident: int, db: Session = Depends(get_db)):
     """
     Ne devrait normalement pas servir 
     """
@@ -375,9 +378,7 @@ def recuperer_incident_by_id(token_api: str, id_incident:int, db: Session = Depe
     return type_incidents
 
 
-
-
-@app.get("/detecteurs/type/", tags=["type","Detecteur"], response_model=List[schemas.Type_detecteur])
+@app.get("/detecteurs/type/", tags=["type", "Detecteur"], response_model=List[schemas.Type_detecteur])
 def recuperer_les_type_detecteurs(token_api: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """
     Ne devrait normalement pas servir 
@@ -386,8 +387,9 @@ def recuperer_les_type_detecteurs(token_api: str, skip: int = 0, limit: int = 10
     type_detecteurs = crud.get_types_detecteurs(db, skip=skip, limit=limit)
     return type_detecteurs
 
-@app.get("/detecteur/type/name/", tags=["type","Detecteur"], response_model=schemas.Type_detecteur)
-def recuperer_detecteur_by_name(token_api: str, name_detecteur:str, db: Session = Depends(get_db)):
+
+@app.get("/detecteur/type/name/", tags=["type", "Detecteur"], response_model=schemas.Type_detecteur)
+def recuperer_detecteur_by_name(token_api: str, name_detecteur: str, db: Session = Depends(get_db)):
     """
     Ne devrait normalement pas servir 
     """
@@ -395,11 +397,49 @@ def recuperer_detecteur_by_name(token_api: str, name_detecteur:str, db: Session 
     type_detecteurs = crud.get_type_detecteur_by_nom(db, nom_type_detecteur=name_detecteur)
     return type_detecteurs
 
-@app.get("/detecteur/type/", tags=["type","Detecteur"], response_model=schemas.Type_detecteur)
-def recuperer_detecteur_by_id(token_api: str, id_detecteur:int, db: Session = Depends(get_db)):
+
+@app.get("/detecteur/type/", tags=["type", "Detecteur"], response_model=schemas.Type_detecteur)
+def recuperer_detecteur_by_id(token_api: str, id_detecteur: int, db: Session = Depends(get_db)):
     """
     Ne devrait normalement pas servir 
     """
     if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
     type_detecteurs = crud.get_type_detecteur_by_id(db, id_type_detecteur=id_detecteur)
     return type_detecteurs
+
+
+@app.post("/detecte/", tags=["Detecteur", "Incident", "Detecte"], response_model=schemas.Detecte)
+def create_detecte_event(detecte: schemas.Detecte, token_api: str, db: Session = Depends(get_db)):
+    """
+    {
+      "id_detecteur": 3,
+      "intensite_detecte": 25,
+      "id_incident": 13,
+      "date_detecte": "2022-01-04T10:38:12.197000+00:00"
+    }
+
+    """
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    event = crud.create_detecte_event(db, detecte=detecte)
+    return event
+
+
+"""
+    DELETE ALL 
+"""
+
+
+@app.delete("/delete_all/", tags=["RESET"])
+def delete_all_element_database(token_api: str, db: Session = Depends(get_db)):
+    """
+        Supprime toutes les entrés de toutes les tables.
+    """
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    detecteurs = recuperer_les_Detecteurs(token_api, 0, 100, db=db)
+    for detecteur in detecteurs:
+        print(detecteur.id_type_detecteur)
+    incidents = get_Incidents(token_api, 0, 100, db=db)
+    for incident in incidents:
+        print(incident.id_type_incident)
+
+    return "cool"

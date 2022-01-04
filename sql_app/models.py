@@ -9,7 +9,7 @@ class Type_incident(Base):
     id_type_incident = Column(Integer, primary_key=True)
     nom_type_incident = Column(String)
 
-    incident = relationship("Incident", back_populates="type")
+    incidents = relationship("Incident", back_populates="type_incident")
 
 
 class Incident(Base):
@@ -21,7 +21,8 @@ class Incident(Base):
     longitude_incident = Column(Numeric(precision=10, scale=7))
     intensite_incident = Column(Numeric(precision=4, scale=2))
 
-    type = relationship("Type_incident", back_populates="incident")
+    type_incident = relationship("Type_incident", back_populates="incidents")
+    detecte = relationship("Detecte", back_populates="incident")
 
 
 class Type_detecteur(Base):
@@ -41,3 +42,18 @@ class Detecteur(Base):
     longitude_detecteur = Column(Numeric(precision=10, scale=7))
 
     type = relationship("Type_detecteur", back_populates="detecteur")
+    detecte = relationship("Detecte", back_populates="detecteur")
+
+class Detecte(Base):
+    __tablename__ = "detecte"
+    id_incident = Column(Integer, ForeignKey('incident.id_incident'), primary_key=True)
+    id_detecteur = Column(Integer, ForeignKey('detecteur.id_detecteur'), primary_key=True)
+    date_detecte = Column(TIMESTAMP)
+    intensite_detecte = Column(Numeric(precision=4, scale=2))
+
+    incident = relationship("Incident", back_populates="detecte")
+    detecteur = relationship("Detecteur", back_populates="detecte")
+
+
+
+

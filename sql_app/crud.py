@@ -1,5 +1,4 @@
 from sqlalchemy.orm import Session
-from sqlalchemy.dialects import postgresql
 from . import models, schemas
 
 
@@ -16,7 +15,8 @@ def create_incidents(db: Session, incident: schemas.IncidentCreate):
     db_incident = models.Incident(id_type_incident=incident.id_type_incident,
                                   latitude_incident=incident.latitude_incident,
                                   longitude_incident=incident.longitude_incident,
-                                  intensite_incident=incident.intensite_incident, date_incident=incident.date_incident)
+                                  intensite_incident=incident.intensite_incident,
+                                  date_incident=incident.date_incident)
     db.add(db_incident)
     db.commit()
     db.refresh(db_incident)
@@ -65,3 +65,14 @@ def get_type_detecteur_by_nom(db: Session, nom_type_detecteur: str):
 
 def get_types_detecteurs(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Type_detecteur).offset(skip).limit(limit).all()
+
+def create_detecte_event(db: Session, detecte: schemas.Detecte):
+    db_detect = models.Detecte(id_incident=detecte.id_incident,
+                               id_detecteur=detecte.id_detecteur,
+                               date_detecte=detecte.date_detecte,
+                               intensite_detecte=detecte.intensite_detecte
+                               )
+    db.add(db_detect)
+    db.commit()
+    db.refresh(db_detect)
+    return db_detect
