@@ -2,6 +2,15 @@ from typing import List, Optional
 from pydantic import BaseModel
 import datetime
 
+"""
+.___              .__    .___             __   
+|   | ____   ____ |__| __| _/____   _____/  |_ 
+|   |/    \_/ ___\|  |/ __ |/ __ \ /    \   __\
+|   |   |  \  \___|  / /_/ \  ___/|   |  \  |  
+|___|___|  /\___  >__\____ |\___  >___|  /__|  
+         \/     \/        \/    \/     \/      
+"""
+
 class IncidentBase(BaseModel):
     id_type_incident: int
     latitude_incident: float
@@ -38,11 +47,22 @@ class Incident(IncidentBase):
         }"""
 
 
+"""
+________          __                 __                       
+\______ \   _____/  |_  ____   _____/  |_  ____  __ _________ 
+ |    |  \_/ __ \   __\/ __ \_/ ___\   __\/ __ \|  |  \_  __ \
+ |    `   \  ___/|  | \  ___/\  \___|  | \  ___/|  |  /|  | \/
+/_______  /\___  >__|  \___  >\___  >__|  \___  >____/ |__|   
+        \/     \/          \/     \/          \/              
+"""
+
+
 class DetecteurBase(BaseModel):
     id_type_detecteur: int
     latitude_detecteur: float
     longitude_detecteur: float
     nom_detecteur: str
+
 
 class DetecteurUpdate(BaseModel):
     id_type_detecteur: Optional[int]
@@ -57,6 +77,28 @@ class DetecteurCreate(DetecteurBase):
 
 class Detecteur(DetecteurBase):
     id_detecteur: int
+
+    class Config:
+        orm_mode = True
+
+
+"""NON UTILISÉ"""
+
+
+class Type_incident(BaseModel):
+    id_type_incident: int
+    nom_type_incident: str
+
+    class Config:
+        orm_mode = True
+
+
+"""NON UTILISÉ"""
+
+
+class Type_detecteur(BaseModel):
+    id_type_detecteur: int
+    nom_type_detecteur: str
 
     class Config:
         orm_mode = True

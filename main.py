@@ -12,7 +12,7 @@ API Simulation Projet Scientifique Transverse 🚒
 
 ## Projet
 
-Github: <a href="https://github.com/ProjetScientifique">Github ⬜️</a>  
+Github: <a href="https://github.com/ProjetScientifique">Github 💻</a>  
 Trello: <a href="https://trello.com/b/U4bDVtQ6/projet-transversal">Trello Projet 📈</a>
 
 ## Utilisation API:
@@ -20,7 +20,7 @@ Trello: <a href="https://trello.com/b/U4bDVtQ6/projet-transversal">Trello Projet
 Vous devez posseder le token de l'api  
 
 
-## Token:
+## Token 🔑 :
 ### 449928d774153132c2c3509647e3d23f8e168fb50660fa27dd33c8342735b166
 
 """
@@ -90,7 +90,7 @@ def nouvel_incident(token_api: str, incident: schemas.IncidentCreate, db: Sessio
 """GET  REQUESTS"""
 
 
-@app.get("/incident/{incident_id}", tags=["Incident"], response_model=schemas.Incident)
+@app.get("/incident/{incident_id}", tags=["Incident"])# ,response_model=schemas.Incident
 def get_Incident(token_api: str, incident_id: int, db: Session = Depends(get_db)):
     """
     Récupères tous les incidents dans une table.
@@ -346,3 +346,60 @@ def delete_detecteur(detecteur_id: int, token_api: str, db: Session = Depends(ge
     return detecteur_delete
 
 
+
+@app.get("/incidents/type/", tags=["type","Incident"], response_model=List[schemas.Type_incident])
+def recuperer_les_type_incidents(token_api: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """
+    Ne devrait normalement pas servir 
+    """
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    type_incidents = crud.get_types_incidents(db, skip=skip, limit=limit)
+    return type_incidents
+
+@app.get("/incident/type/name/", tags=["type","Incident"], response_model=schemas.Type_incident)
+def recuperer_incident_by_name(token_api: str, name_incident:str, db: Session = Depends(get_db)):
+    """
+    Ne devrait normalement pas servir 
+    """
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    type_incidents = crud.get_type_incident_by_nom(db, nom_type_incident=name_incident)
+    return type_incidents
+
+@app.get("/incident/type/", tags=["type","Incident"], response_model=schemas.Type_incident)
+def recuperer_incident_by_id(token_api: str, id_incident:int, db: Session = Depends(get_db)):
+    """
+    Ne devrait normalement pas servir 
+    """
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    type_incidents = crud.get_type_incident_by_id(db, id_type_incident=id_incident)
+    return type_incidents
+
+
+
+
+@app.get("/detecteurs/type/", tags=["type","Detecteur"], response_model=List[schemas.Type_detecteur])
+def recuperer_les_type_detecteurs(token_api: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """
+    Ne devrait normalement pas servir 
+    """
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    type_detecteurs = crud.get_types_detecteurs(db, skip=skip, limit=limit)
+    return type_detecteurs
+
+@app.get("/detecteur/type/name/", tags=["type","Detecteur"], response_model=schemas.Type_detecteur)
+def recuperer_detecteur_by_name(token_api: str, name_detecteur:str, db: Session = Depends(get_db)):
+    """
+    Ne devrait normalement pas servir 
+    """
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    type_detecteurs = crud.get_type_detecteur_by_nom(db, nom_type_detecteur=name_detecteur)
+    return type_detecteurs
+
+@app.get("/detecteur/type/", tags=["type","Detecteur"], response_model=schemas.Type_detecteur)
+def recuperer_detecteur_by_id(token_api: str, id_detecteur:int, db: Session = Depends(get_db)):
+    """
+    Ne devrait normalement pas servir 
+    """
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    type_detecteurs = crud.get_type_detecteur_by_id(db, id_type_detecteur=id_detecteur)
+    return type_detecteurs

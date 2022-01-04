@@ -1,10 +1,12 @@
 from sqlalchemy.orm import Session
+from sqlalchemy.dialects import postgresql
 from . import models, schemas
 
 
 def get_incident(db: Session, incident_id: int):
-    return db.query(models.Incident).filter(models.Incident.id_incident == incident_id).first()
-
+    return db.query(models.Incident). \
+        filter(models.Incident.id_incident == incident_id). \
+        first()
 
 def get_incidents(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Incident).offset(skip).limit(limit).all()
@@ -38,3 +40,28 @@ def create_detecteur(db: Session, detecteur: schemas.DetecteurCreate):
     db.commit()
     db.refresh(db_detecteur)
     return db_detecteur
+
+
+def get_type_incident_by_id(db: Session, id_type_incident: int):
+    return db.query(models.Type_incident).filter(models.Type_incident.id_type_incident == id_type_incident).first()
+
+
+def get_type_incident_by_nom(db: Session, nom_type_incident: str):
+    return db.query(models.Type_incident).filter(models.Type_incident.nom_type_incident == nom_type_incident).first()
+
+
+def get_types_incidents(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Type_incident).offset(skip).limit(limit).all()
+
+
+def get_type_detecteur_by_id(db: Session, id_type_detecteur: int):
+    return db.query(models.Type_detecteur).filter(models.Type_detecteur.id_type_detecteur == id_type_detecteur).first()
+
+
+def get_type_detecteur_by_nom(db: Session, nom_type_detecteur: str):
+    return db.query(models.Type_detecteur).filter(
+        models.Type_detecteur.nom_type_detecteur == nom_type_detecteur).first()
+
+
+def get_types_detecteurs(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Type_detecteur).offset(skip).limit(limit).all()
