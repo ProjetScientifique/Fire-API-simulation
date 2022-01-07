@@ -423,6 +423,64 @@ def create_detecte_event(detecte: schemas.Detecte, token_api: str, db: Session =
     event = crud.create_detecte_event(db, detecte=detecte)
     return event
 
+@app.get("/detecte/", tags=["Detecte"], response_model=schemas.Detecte)
+def get_detecte_event(id_detecteur:int, id_incident:int, token_api: str, db: Session = Depends(get_db)):
+    """
+    {
+      "id_detecteur": 3,
+      "intensite_detecte": 25,
+      "id_incident": 13,
+      "date_detecte": "2022-01-04T10:38:12.197000+00:00"
+    }
+
+    """
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    db_detecteur = crud.get_detecte_event(id_incident,id_detecteur,db)
+    if db_detecteur is None:
+        raise HTTPException(status_code=404, detail="Event Detecte not found")
+    return db_detecteur
+
+@app.get("/detectes/", tags=["Detecte"], response_model=List[schemas.Detecte])
+def get_detectes_events(token_api: str,skip: int = 0, limit: int = 100,  db: Session = Depends(get_db)):
+    """
+    {
+      "id_detecteur": 3,
+      "intensite_detecte": 25,
+      "id_incident": 13,
+      "date_detecte": "2022-01-04T10:38:12.197000+00:00"
+    }
+
+    """
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    db_detecteur = crud.get_detectes_events(db,skip,limit)
+    if db_detecteur is None:
+        raise HTTPException(status_code=404, detail="Event Detecte not found")
+    return db_detecteur
+
+@app.delete("/detecte/", tags=["Detecte"], response_model=schemas.Detecte)
+def delete_detecte(id_incident:int, id_detecteur:int, token_api: str, db: Session = Depends(get_db)):
+    """
+
+    :param id_detecteur: int
+    :param id_incident: int
+    :param token_api: str
+    :return: schema.Detecte
+    """
+    if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    detecte_event_to_delete = db.query(models.Detecte).\
+        filter(models.Detecte.id_detecteur == id_detecteur).\
+        filter(models.Detecte.id_incident == id_incident).\
+        first()
+
+    if detecte_event_to_delete is None:
+        raise HTTPException(status_code=404, detail="Resource Not Found")
+
+    db.delete(detecte_event_to_delete)
+    db.commit()
+
+    return detecte_event_to_delete
+
+
 
 """
     DELETE ALL 
@@ -448,4 +506,4 @@ def delete_all_element_database(token_api: str, db: Session = Depends(get_db)):
         # remise de l'id incident à 1
         engine.execute('ALTER SEQUENCE public.incident_id_incident_seq RESTART WITH 1;')
 
-    return "Les éléments dans la table incident et detecteur ont bien été supprimés"
+    return {"status":200,"message":"Toutes les éléments des tables (incident, detecteur, detecte) sont supprimées"}
