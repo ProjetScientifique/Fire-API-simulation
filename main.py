@@ -503,7 +503,7 @@ def delete_all_element_database(token_api: str, db: Session = Depends(get_db)):
         #print(detecteur.id_detecteur)
     incidents = get_Incidents(token_api, 0, 1000, db=db)
     for incident in incidents:
-        delete_incident(detecteur.id_detecteur, token_api, db=db)
+        delete_incident(incident.id_incident, token_api, db=db)
         #print(incident.id_incident)
 
     return {"status":200,"message":"Toutes les éléments des tables (incident, detecteur, detecte) sont supprimées"}
