@@ -39,11 +39,15 @@ class IncidentCreate(IncidentBase):
 
 class Incident(IncidentBase):
     id_incident: int
-    type_incident : Type_incident
+    
     class Config:
         orm_mode = True
 
-
+class IncidentAll(Incident):
+    type_incident : Type_incident
+    
+    class Config:
+        orm_mode = True
 
 
 """
@@ -57,7 +61,6 @@ ________          __                 __
 
 
 class DetecteurBase(BaseModel):
-    id_detecteur: Optional[int]
     id_type_detecteur: int
     latitude_detecteur: float
     longitude_detecteur: float
