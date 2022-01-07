@@ -428,18 +428,24 @@ def create_detecte_event(detecte: schemas.Detecte, token_api: str, db: Session =
     DELETE ALL 
 """
 
-
+# Permet de delete tous les éléments dans la table incident et detecteur mais également de remettre les ids à 1
 @app.delete("/delete_all/", tags=["RESET"])
 def delete_all_element_database(token_api: str, db: Session = Depends(get_db)):
     """
         Supprime toutes les entrés de toutes les tables.
     """
     if not token.token(token_api): raise HTTPException(status_code=401, detail="Token API non ou mal définit.")
+    
     detecteurs = recuperer_les_Detecteurs(token_api, 0, 100, db=db)
     for detecteur in detecteurs:
-        print(detecteur.id_type_detecteur)
+        delete_detecteur(detecteur.id_detecteur, token_api, db)
+        # remise de l'id detecteur à 1
+        engine.execute('ALTER SEQUENCE public.detecteur_id_detecteur_seq RESTART WITH 1;')
+
     incidents = get_Incidents(token_api, 0, 100, db=db)
     for incident in incidents:
-        print(incident.id_type_incident)
+        delete_incident(incident.id_incident, token_api, db)
+        # remise de l'id incident à 1
+        engine.execute('ALTER SEQUENCE public.incident_id_incident_seq RESTART WITH 1;')
 
-    return "cool"
+    return "Les éléments dans la table incident et detecteur ont bien été supprimés"
