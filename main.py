@@ -6,7 +6,6 @@ from sqlalchemy.orm import Session
 
 from sql_app import crud, models, schemas
 from sql_app.database import SessionLocal, engine
-import uvicorn
 
 description = """
 API Simulation Projet Scientifique Transverse 🚒
@@ -468,6 +467,3 @@ def delete_all_element_database(token_api: str, db: Session = Depends(get_db)):
         engine.execute('ALTER SEQUENCE public.incident_id_incident_seq RESTART WITH 1;')
 
     return {"status":200,"message":"Toutes les éléments des tables (incident, detecteur, detecte) sont supprimées"}
-
-if __name__ == '__main__':
-    uvicorn.run(app, port=8000, host="0.0.0.0")
